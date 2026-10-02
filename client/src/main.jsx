@@ -11,7 +11,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 // Global Axios Interceptor to attach the token to every request
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  // Only attach our app's JWT token if the request is NOT going to Google's API
+  if (token && !config.url.includes("googleapis.com")) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
