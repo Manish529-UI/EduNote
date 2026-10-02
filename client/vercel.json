@@ -11,6 +11,13 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { 
+      "source": "/__/auth/:match*", 
+      "destination": "https://edunote-23aed.firebaseapp.com/__/auth/:match*" 
+    },
+    { 
+      "source": "/(.*)", 
+      "destination": "/index.html" 
+    }
   ]
 }
