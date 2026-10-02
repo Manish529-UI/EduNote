@@ -4,7 +4,7 @@ import {getAuth, GoogleAuthProvider} from "firebase/auth"
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
-  authDomain: "edunote-23aed.firebaseapp.com",
+  authDomain: window.location.hostname || "edunote-23aed.firebaseapp.com",
   projectId: "edunote-23aed",
   storageBucket: "edunote-23aed.firebasestorage.app",
   messagingSenderId: "606246396553",
