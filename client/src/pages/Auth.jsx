@@ -25,7 +25,8 @@ function Auth() {
       const result = await axios.post(serverUrl + "/api/auth/google" , {name , email},{
         withCredentials:true
       })
-      dispatch(setUserData(result.data))
+      localStorage.setItem("token", result.data.token);
+      dispatch(setUserData(result.data.user))
       navigate("/", { replace: true })
     } catch (error) {
       console.log(error)

@@ -16,8 +16,9 @@ const app = express()
 app.set("trust proxy", 1)
 
 app.use(cors(
-    {origin: process.env.CLIENT_URL || "http://localhost:5173",
-        credentials:true,
+    {
+        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
 ))
@@ -27,19 +28,19 @@ app.use(cookieParser())
 
 const PORT = process.env.PORT || 5000
 
-app.get("/",(req,res)=>{
-    res.json({message:"EduNote Backend Running 🚀"})
+app.get("/", (req, res) => {
+    res.json({ message: "EduNote Backend Running 🚀" })
 })
 
-app.use("/api/auth" , authRouter)
+app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/notes", notesRouter)
 app.use("/api/pdf", pdfRouter)
-app.use("/api/credit",creditRouter)
+app.use("/api/credit", creditRouter)
 
 // Connect to DB first, then start server
 connectDb().then(() => {
-    app.listen(PORT,()=>{
+    app.listen(PORT, () => {
         console.log(`✅ Server running on port ${PORT}`)
     })
 }).catch((err) => {

@@ -22,7 +22,7 @@ export const googleAuth = async (req,res) => {
         }
         let token = await getToken(user._id)
         res.cookie("token" , token , cookieOptions)
-        return res.status(200).json(user)
+        return res.status(200).json({ user, token })
     } catch (error) {
         return res.status(500).json({message:`googleSignup Error  ${error}`})
     }
