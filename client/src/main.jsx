@@ -24,9 +24,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
     <Provider store={store}>
-      <GoogleOAuthProvider clientId="606246396553-qh7cgn6drfvco9jimfm4bggtumjk49f2.apps.googleusercontent.com">
-        <App />
-      </GoogleOAuthProvider>
+      <App />
     </Provider>
     </BrowserRouter>
   </StrictMode>,

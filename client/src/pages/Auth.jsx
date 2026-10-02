@@ -1,57 +1,24 @@
 import React, { useState } from 'react'
 import { motion } from "motion/react"
 import { FcGoogle } from "react-icons/fc";
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from "axios"
-import { serverUrl } from '../App';
-import { useDispatch } from 'react-redux';
-import { setUserData } from '../redux/userSlice';
-import { useNavigate } from 'react-router-dom';
 
 function Auth() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setLoading(true);
-        // Fetch user info from Google
-        const userInfo = await axios.get(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
-        );
-        
-        const name = userInfo.data.name;
-        const email = userInfo.data.email;
-        
-        const result = await axios.post(serverUrl + "/api/auth/google", { name, email }, {
-          withCredentials: true
-        });
-        
-        localStorage.setItem("token", result.data.token);
-        dispatch(setUserData(result.data.user));
-        navigate("/", { replace: true });
-      } catch (err) {
-        console.error("Google Auth API Error:", err);
-        setError("Login failed. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    },
-    onError: errorResponse => {
-      console.error("Google Login Error:", errorResponse);
-      setError("Login failed. Please try again.");
-      setLoading(false);
-    },
-  });
-
   const handleGoogleAuth = () => {
     setLoading(true);
-    setError("");
-    login();
+    
+    // Construct Google OAuth URL for Implicit Flow
+    const clientId = '606246396553-qh7cgn6drfvco9jimfm4bggtumjk49f2.apps.googleusercontent.com';
+    // Use the exact redirect URI that is already registered in Google Cloud Console
+    const redirectUri = window.location.origin + '/__/auth/handler';
+    const scope = encodeURIComponent('email profile openid');
+    const responseType = 'token';
+    
+    const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scope}`;
+    
+    window.location.href = googleOAuthUrl;
   }
   return (
     <div className='min-h-screen overflow-hidden bg-white text-black px-8'>
