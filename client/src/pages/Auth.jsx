@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from "motion/react"
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { auth, provider } from '../utils/firebase';
 import axios from "axios"
 import { serverUrl } from '../App';
@@ -15,26 +15,41 @@ function Auth() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+  useEffect(() => {
+    const checkRedirect = async () => {
+      try {
+        setLoading(true);
+        const response = await getRedirectResult(auth);
+        if (response && response.user) {
+          const User = response.user;
+          const name = User.displayName;
+          const email = User.email;
+          const result = await axios.post(serverUrl + "/api/auth/google", { name, email }, {
+            withCredentials: true
+          });
+          localStorage.setItem("token", result.data.token);
+          dispatch(setUserData(result.data.user));
+          navigate("/", { replace: true });
+        }
+      } catch (err) {
+        console.error("Redirect auth error:", err);
+        setError("Login failed after redirect. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkRedirect();
+  }, [dispatch, navigate]);
+
   const handleGoogleAuth = async () => {
     setLoading(true)
     setError("")
     try {
-      const response = await signInWithPopup(auth,provider)
-      const User = response.user
-      const name = User.displayName
-      const email = User.email
-      const result = await axios.post(serverUrl + "/api/auth/google" , {name , email},{
-        withCredentials:true
-      })
-      localStorage.setItem("token", result.data.token);
-      dispatch(setUserData(result.data.user))
-      navigate("/", { replace: true })
+      await signInWithRedirect(auth, provider);
+      // The page will redirect to Google, so code below won't execute immediately
     } catch (error) {
-      console.log("Popup auth error:", error)
-      if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
-        setError("Login failed. Please try again.")
-      }
-    } finally {
+      console.log(error)
+      setError("Failed to initialize Google login.")
       setLoading(false)
     }
   }
