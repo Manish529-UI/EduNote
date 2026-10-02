@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './redux/store.js'
 import axios from 'axios'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 // Global Axios Interceptor to attach the token to every request
 axios.interceptors.request.use((config) => {
@@ -22,7 +23,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
     <Provider store={store}>
-    <App />
+      <GoogleOAuthProvider clientId="606246396553-qh7cgn6drfvco9jimfm4bggtumjk49f2.apps.googleusercontent.com">
+        <App />
+      </GoogleOAuthProvider>
     </Provider>
     </BrowserRouter>
   </StrictMode>,

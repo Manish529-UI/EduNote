@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from "motion/react"
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../utils/firebase';
+import { useGoogleLogin } from '@react-oauth/google';
 import axios from "axios"
 import { serverUrl } from '../App';
 import { useDispatch } from 'react-redux';
@@ -15,28 +14,44 @@ function Auth() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleGoogleAuth = async () => {
-    setLoading(true)
-    setError("")
-    try {
-      const response = await signInWithPopup(auth,provider)
-      const User = response.user
-      const name = User.displayName
-      const email = User.email
-      const result = await axios.post(serverUrl + "/api/auth/google" , {name , email},{
-        withCredentials:true
-      })
-      localStorage.setItem("token", result.data.token);
-      dispatch(setUserData(result.data.user))
-      navigate("/", { replace: true })
-    } catch (error) {
-      console.log("Popup auth error:", error)
-      if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
-        setError("Login failed. Please try again.")
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true);
+        // Fetch user info from Google
+        const userInfo = await axios.get(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+        );
+        
+        const name = userInfo.data.name;
+        const email = userInfo.data.email;
+        
+        const result = await axios.post(serverUrl + "/api/auth/google", { name, email }, {
+          withCredentials: true
+        });
+        
+        localStorage.setItem("token", result.data.token);
+        dispatch(setUserData(result.data.user));
+        navigate("/", { replace: true });
+      } catch (err) {
+        console.error("Google Auth API Error:", err);
+        setError("Login failed. Please try again.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false)
-    }
+    },
+    onError: errorResponse => {
+      console.error("Google Login Error:", errorResponse);
+      setError("Login failed. Please try again.");
+      setLoading(false);
+    },
+  });
+
+  const handleGoogleAuth = () => {
+    setLoading(true);
+    setError("");
+    login();
   }
   return (
     <div className='min-h-screen overflow-hidden bg-white text-black px-8'>
