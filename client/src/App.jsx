@@ -13,11 +13,24 @@ export const serverUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:80
 
 function App() {
   const dispatch = useDispatch()
+  const [isCheckingAuth, setIsCheckingAuth] = React.useState(!!localStorage.getItem("token"));
+  
   useEffect(()=>{
-   getCurrentUser(dispatch)
+   const checkAuth = async () => {
+     if (localStorage.getItem("token")) {
+       await getCurrentUser(dispatch);
+     }
+     setIsCheckingAuth(false);
+   };
+   checkAuth();
   },[dispatch])
 
   const {userData} = useSelector((state)=>state.user)
+
+  if (isCheckingAuth) {
+    return <div className="min-h-screen flex items-center justify-center bg-white text-black font-semibold">Loading...</div>
+  }
+
   return (
     <>
     <Routes>

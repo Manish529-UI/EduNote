@@ -28,7 +28,7 @@ function Auth() {
       })
       localStorage.setItem("token", result.data.token);
       dispatch(setUserData(result.data.user))
-      window.location.href = "/" // Force a hard redirect to ensure state is clean
+      navigate("/", { replace: true })
     } catch (error) {
       console.log("Popup auth error:", error)
       if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
