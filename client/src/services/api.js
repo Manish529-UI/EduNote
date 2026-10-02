@@ -8,8 +8,9 @@ export const getCurrentUser = async (dispatch) => {
         
         dispatch(setUserData(result.data))
     } catch (error) {
-        // 401 is expected when not logged in — ignore silently
-        if (error.response?.status !== 401) {
+        if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+        } else {
             console.log(error)
         }
     }
