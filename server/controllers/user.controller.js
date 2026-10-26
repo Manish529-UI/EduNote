@@ -3,7 +3,7 @@ import UserModel from "../models/user.model.js"
 export const getCurrentUser = async (req,res) => {
     try {
         const userId = req.userId
-        const user = await UserModel.findById(userId)
+        const user = await UserModel.findById(userId).select("-password -resetPasswordToken -resetPasswordExpires")
         if(!user){
             return res.status(404).json({message:"Current User is not found"})
         }

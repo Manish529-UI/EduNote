@@ -10,8 +10,9 @@ export const getCurrentUser = async (dispatch) => {
     } catch (error) {
         if (error.response?.status === 401) {
             localStorage.removeItem("token");
+            dispatch(setUserData(null));
         } else {
-            console.log(error)
+            console.log(error);
         }
     }
 }

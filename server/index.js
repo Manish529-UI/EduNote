@@ -15,13 +15,22 @@ const app = express()
 // Trust proxy — required for Render/Railway (secure cookies behind reverse proxy)
 app.set("trust proxy", 1)
 
-app.use(cors(
-    {
-        origin: process.env.CLIENT_URL || "http://localhost:5173",
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    }
-))
+const allowedOrigins = (process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:5173", "http://localhost:3000"])
+    .map(url => url.trim().replace(/\/$/, ""));
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const normalized = origin.replace(/\/$/, "");
+        if (allowedOrigins.includes(normalized) || process.env.NODE_ENV !== "production") {
+            return callback(null, true);
+        }
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
+}));
 
 app.use(express.json())
 app.use(cookieParser())

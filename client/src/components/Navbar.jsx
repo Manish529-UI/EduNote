@@ -16,14 +16,13 @@ function Navbar() {
     const dispatch = useDispatch()
     const handleSignOut = async () => {
         try {
-            await axios.get(serverUrl+ "/api/auth/logout" , {withCredentials:true})
+            await axios.get(serverUrl + "/api/auth/logout", { withCredentials: true })
+        } catch (error) {
+            console.error("Sign out error:", error)
+        } finally {
             localStorage.removeItem("token");
             dispatch(setUserData(null))
             navigate("/auth")
-            
-            
-        } catch (error) {
-            console.log(error)
         }
     }
     return (

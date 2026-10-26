@@ -6,13 +6,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './redux/store.js'
 import axios from 'axios'
-import { GoogleOAuthProvider } from '@react-oauth/google'
-
 // Global Axios Interceptor to attach the token to every request
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  // Only attach our app's JWT token if the request is NOT going to Google's API
-  if (token && !config.url.includes("googleapis.com")) {
+  if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
