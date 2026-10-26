@@ -53,37 +53,34 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
     }
   }
 
-  useEffect(()=>{
-  if(!loading){
-    setProgress(0);
-    setProgressText("")
-    return;
-  }
-  let value = 0;
-
-  const interval = setInterval(()=>{
-    value += Math.random() * 8
-
-     if (value >= 95) {
-      value = 95;
-      setProgressText("Almost done…");
-      clearInterval(interval);
-    } else if (value > 70) {
-      setProgressText("Finalizing notes…");
-    } else if (value > 40) {
-      setProgressText("Processing content…");
-    } else {
-      setProgressText("Generating notes…");
+  useEffect(() => {
+    if (!loading) {
+      setProgress(0);
+      setProgressText("");
+      return;
     }
+    let value = 0;
 
-    setProgress(Math.floor(value))
+    const interval = setInterval(() => {
+      value += Math.random() * 6 + 2;
 
-  },700)
+      if (value >= 94) {
+        value = 94;
+        setProgressText("Almost done…");
+        clearInterval(interval);
+      } else if (value > 65) {
+        setProgressText("Finalizing notes…");
+      } else if (value > 35) {
+        setProgressText("Processing content…");
+      } else {
+        setProgressText("Generating notes…");
+      }
 
-  return () => clearInterval(interval);
+      setProgress(Math.floor(value));
+    }, 400);
 
-
-  },[loading])
+    return () => clearInterval(interval);
+  }, [loading]);
 
 
 
@@ -188,7 +185,7 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
         <span>{progress}%</span>
       </div>
       <p className='text-xs text-gray-400 text-center'>
-         This may take up to 2–5 minutes. Please don’t close or refresh the page.
+         Generating exam-focused notes... Please don't close or refresh the page.
       </p>
 
 
