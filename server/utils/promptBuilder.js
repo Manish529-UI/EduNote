@@ -15,8 +15,8 @@ You are a STRICT JSON generator for an exam preparation system.
 - INVALID JSON will cause system failure
 - Use ONLY double quotes "
 - NO comments, NO trailing commas
-- Escape line breaks using \\n
-- Do NOT use emojis inside text values
+- Inside JSON string values, use standard \n for line breaks
+- Do NOT use emojis inside text values except in priority star headings
 
 TASK:
 Convert the given topic into exam-focused notes.
@@ -31,8 +31,20 @@ Include Charts: ${includeChart ? "YES" : "NO"}
 
 GLOBAL CONTENT RULES:
 - Use clear, simple, exam-oriented language
-- Notes MUST be Markdown formatted
-- Headings and bullet points only
+- "notes" MUST be cleanly formatted Markdown text
+- Structure "notes" with clear hierarchical headings:
+  - Main categories use Level 2 headings (##):
+    ## ⭐ Very Important Topics
+    ## ⭐⭐ Important Topics
+    ## ⭐⭐⭐ Frequently Asked Topics
+  - Sub-topics under each category use Level 3 headings (###):
+    ### Subtopic Name
+  - Details under subtopics MUST be structured bullet points:
+    - **Definition:** Clear definition
+    - **Explanation:** Essential exam concepts
+    - **Key Formula / Example:** Relevant examples or equations
+- ALWAYS place blank lines before and after every heading (## and ###) so Markdown parses properly
+- Never merge multiple headings or bullets into one continuous sentence
 
 REVISION MODE RULES (CRITICAL):
 - If REVISION MODE is ON:
@@ -49,12 +61,9 @@ REVISION MODE RULES (CRITICAL):
 
 - If REVISION MODE is OFF:
   - Notes must be DETAILED but exam-focused
-  - Each topic should include:
-    - definition
-    - short explanation
-    - examples (if applicable)
+  - Each topic should include definition, explanation, and examples
   - Paragraph length: max 2–4 lines
-  - No storytelling, no extra theory
+  - No storytelling, no extra filler theory
 
 IMPORTANCE RULES:
 - Divide sub-topics into THREE categories:

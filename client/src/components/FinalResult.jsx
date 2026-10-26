@@ -5,33 +5,48 @@ import RechartSetUp from './RechartSetUp';
 import { downloadPdf } from '../services/api';
 const markDownComponent = {
     h1: ({ children }) => (
-        <h1 className="text-2xl font-bold text-indigo-700 mt-6 mb-4 border-b pb-2">
+        <h1 className="text-2xl font-bold text-indigo-700 mt-6 mb-4 border-b border-indigo-100 pb-2">
             {children}
         </h1>
     ),
     h2: ({ children }) => (
-        <h2 className="text-xl font-semibold text-indigo-600 mt-5 mb-3">
+        <h2 className="text-xl font-bold text-indigo-600 mt-6 mb-3 border-b border-gray-100 pb-1">
             {children}
         </h2>
     ),
     h3: ({ children }) => (
-        <h3 className="text-lg font-semibold text-gray-800 mt-4 mb-2">
+        <h3 className="text-lg font-bold text-gray-900 mt-4 mb-2">
             {children}
         </h3>
+    ),
+    h4: ({ children }) => (
+        <h4 className="text-base font-semibold text-gray-800 mt-3 mb-1">
+            {children}
+        </h4>
     ),
     p: ({ children }) => (
         <p className="text-gray-700 leading-relaxed mb-3">
             {children}
         </p>
     ),
+    strong: ({ children }) => (
+        <strong className="font-semibold text-gray-900">
+            {children}
+        </strong>
+    ),
     ul: ({ children }) => (
-        <ul className="list-disc ml-6 space-y-1 text-gray-700">
+        <ul className="list-disc ml-6 space-y-1.5 text-gray-700 mb-4">
             {children}
         </ul>
     ),
     li: ({ children }) => (
-        <li className="marker:text-indigo-500">{children}</li>
+        <li className="marker:text-gray-400 pl-1 leading-relaxed">{children}</li>
     ),
+    code: ({ children }) => (
+        <code className="bg-gray-100 text-indigo-700 px-1.5 py-0.5 rounded text-sm font-mono">
+            {children}
+        </code>
+    )
 }
 function FinalResult({ result }) {
     const [quickRevision, setQuickRevision] = useState(false);
@@ -45,6 +60,18 @@ function FinalResult({ result }) {
     ) {
         return null;
     }
+
+    const formatNotes = (notes) => {
+        if (!notes || typeof notes !== "string") return "";
+        let cleaned = notes
+            .replace(/\\r\\n/g, "\n")
+            .replace(/\\n/g, "\n");
+        // Ensure priority category headings start with markdown ## if missing
+        cleaned = cleaned.replace(/^([ \t]*)(⭐+ [^\n]+)/gm, "$1## $2");
+        return cleaned;
+    };
+
+    const formattedNotes = formatNotes(result.notes);
 
     return (
         <div className='mt-6 p-3 space-y-10 bg-white'>
@@ -98,8 +125,7 @@ function FinalResult({ result }) {
                 <SectionHeader icon="📝" title="Detailed Notes" color="purple" />
                 <div className='bg-white border border-gray-200 rounded-xl p-6'>
                     <ReactMarkdown components={markDownComponent}>
-                        {result.notes}
-
+                        {formattedNotes}
                     </ReactMarkdown>
                 </div>
             </section>}

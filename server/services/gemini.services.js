@@ -24,6 +24,15 @@ const cleanAndParseJson = (rawText) => {
         throw new Error("Incomplete JSON schema returned by AI");
     }
 
+    if (typeof parsed.notes === "string") {
+        // Normalize literal \n escapes into real line breaks and format main priority headings
+        let normalized = parsed.notes
+            .replace(/\\r\\n/g, "\n")
+            .replace(/\\n/g, "\n");
+        normalized = normalized.replace(/^([ \t]*)(⭐+ [^\n]+)/gm, "$1## $2");
+        parsed.notes = normalized;
+    }
+
     return parsed;
 };
 
